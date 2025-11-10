@@ -1,5 +1,8 @@
 {
   "extends": "@react-native/typescript-config",
-  "include": ["**/*.ts", "**/*.tsx"],
+  "compilerOptions": {
+    "types": ["react-native", "@tamagui/types"]
+  },
+  "include": ["**/*.ts", "**/*.tsx", "tamagui.config.ts"],
   "exclude": ["**/node_modules", "**/Pods"]
 }
