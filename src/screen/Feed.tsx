@@ -1,12 +1,33 @@
 /* eslint-disable react-native/no-inline-styles */
 import { useNavigation } from '@react-navigation/native';
-import { TextInput } from 'react-native';
-import { ScrollView, Text, XStack, YStack } from 'tamagui';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, Text, XStack, YStack } from 'tamagui';
 
 import { SearchIcon, UserIcon } from '../components/icons';
+import { auth, firestore } from '../services/firebase';
 
 export default function Feed() {
   const navigation = useNavigation();
+  const userId = auth().currentUser?.uid;
+
+  const [photoUrl, setPhotoUrl] = useState('');
+
+  useEffect(() => {
+    if (!userId) return;
+
+    // Listener em tempo real
+    const unsubscribe = firestore()
+      .collection('users')
+      .doc(userId)
+      .onSnapshot(doc => {
+        // ← Fica escutando mudanças
+        const userData = doc.data();
+        setPhotoUrl(userData?.photoURL || '');
+      });
+
+    // Cleanup - IMPORTANTE!
+    return () => unsubscribe();
+  }, [userId]);
 
   const Stories = Array.from({ length: 6 }).map((_, index) => (
     <XStack
@@ -52,26 +73,19 @@ export default function Feed() {
     <YStack flex={1} jc="center" ai="center">
       {/* Header com stories, SearchBar e Profile image*/}
       {/* SearchBar e ProfileImage */}
-      <XStack jc="flex-start" ai="flex-end" pl={10} h="15%" zi={99} w="100%">
+      <XStack jc="space-between" ai="center" pl={10} h="8%" w="100%">
         <XStack
-          jc="flex-start"
+          jc="center"
           ai="center"
-          w="80%"
-          pl={10}
-          gap={8}
+          w={40}
+          h={40}
           bw={1}
-          mb={10}
           br={30}
+          onPress={() => navigation.navigate('search')}
         >
           <SearchIcon />
-          <TextInput
-            placeholder="Search"
-            style={{
-              width: '85%',
-              height: '40%',
-            }}
-          />
         </XStack>
+        <XStack w={50} h={50} />
         <XStack
           jc="center"
           ai="center"
@@ -81,12 +95,24 @@ export default function Feed() {
           pressStyle={{ scale: 0.95 }}
           onPress={() => navigation.navigate('Profile')}
         >
-          <UserIcon size={50} />
+          {photoUrl ? (
+            <Image
+              source={{ uri: photoUrl }}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 70,
+                borderWidth: 2,
+              }}
+            />
+          ) : (
+            <UserIcon size={90} />
+          )}
         </XStack>
       </XStack>
+
       {/* --------- */}
       {/* Stories */}
-
       <YStack
         jc="flex-end"
         h="10%"
@@ -110,8 +136,10 @@ export default function Feed() {
           </YStack>
         </ScrollView>
       </YStack>
-
       {/* ------ */}
     </YStack>
   );
 }
+// function setPhotoUrl(arg0: any) {
+//   throw new Error('Function not implemented.');
+// }

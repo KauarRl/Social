@@ -4,6 +4,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 export type RootStackParamList = {
     Feed: undefined;
     Profile: undefined;
+    Login: undefined;
+    Register: undefined;
+    CompleteProfile: undefined;
+    Load: undefined;
+    EditProfile: undefined;
+    search: undefined;
 };
 
 // Screen props types

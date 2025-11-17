@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "242667681699",
+    "project_id": "alay-9fcbe",
+    "storage_bucket": "alay-9fcbe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242667681699:android:eb07a6092262d4b206cc16",
+        "android_client_info": {
+          "package_name": "com.Alay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCloB6q139cz2HjMgG2rSdykqjdWzEKrNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
