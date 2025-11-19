@@ -94,8 +94,7 @@ export default function CompleteProfile({ navigation }: CompleteProfileProps) {
         text2: 'Bem-vindo!',
       });
 
-      // Agora o Feed está dentro do TabNavigator (MainTabs)
-      navigation.navigate('MainTabs', { screen: 'Feed' });
+      navigation.navigate('Feed');
     } catch (error) {
       console.error(error);
       Toast.show({

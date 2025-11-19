@@ -12,6 +12,7 @@ import { Load } from '../screen/Load';
 import { searchScreen } from '../screen/searchScreen';
 import CompleteProfile from '../screen/User/CompleteProfile';
 import EditProfile from '../screen/User/EditProfile';
+import FriendProfile from '../screen/User/FriendProfile';
 import Login from '../screen/User/Login';
 import Profile from '../screen/User/Profile';
 import Register from '../screen/User/Register';
@@ -100,6 +101,7 @@ function MainTabs() {
     >
       <Tab.Screen name="Feed" component={Feed} />
       <Tab.Screen name="Profile" component={Profile} />
+
       {/* Adicione mais tabs se precisar que apareçam na barra */}
     </Tab.Navigator>
   );
@@ -119,6 +121,7 @@ export function RootNavigator() {
       <Stack.Screen name="CompleteProfile" component={CompleteProfile} />
       <Stack.Screen name="CreatePost" component={CreatePost} />
       <Stack.Screen name="PostDetails" component={PostDetails} />
+      <Tab.Screen name="FriendProfile" component={FriendProfile} />
 
       {/* Telas com bottom tab: basta navegar para MainTabs */}
       <Stack.Screen name="MainTabs" component={MainTabs} />

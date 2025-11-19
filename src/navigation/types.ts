@@ -18,6 +18,9 @@ export type RootStackParamList = {
     caption?: string;
     createdAt?: string;
   };
+  FriendProfile: {
+    profileUserId: string;
+  };
 };
 
 // Screen props types
