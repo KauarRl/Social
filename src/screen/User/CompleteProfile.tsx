@@ -5,10 +5,10 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import { H1, Text, XStack, YStack } from 'tamagui';
 
-import { UserIcon } from '../components/icons';
-import { RootStackScreenProps } from '../navigation/types';
-import { auth, firestore } from '../services/firebase';
-import { uploadImageToCloudinary } from '../services/uploadImage';
+import { UserIcon } from '../../components/icons';
+import { RootStackScreenProps } from '../../navigation/types';
+import { auth, firestore } from '../../services/firebase';
+import { uploadImageToCloudinary } from '../../services/uploadImage';
 
 type CompleteProfileProps = RootStackScreenProps<'CompleteProfile'>;
 

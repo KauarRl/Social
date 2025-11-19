@@ -5,16 +5,16 @@ import React, { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text, XStack, YStack } from 'tamagui';
 
-import CompleteProfile from '../screen/CompleteProfile';
-import CreatePost from '../screen/CreatePost';
-import EditProfile from '../screen/EditProfile';
+import CreatePost from '../screen/Creation/Posts/CreatePost';
+import PostDetails from '../screen/Creation/Posts/PostDetails';
 import Feed from '../screen/Feed';
 import { Load } from '../screen/Load';
-import Login from '../screen/Login';
-import PostDetails from '../screen/PostDetails';
-import Profile from '../screen/Profile';
-import Register from '../screen/Register';
 import { searchScreen } from '../screen/searchScreen';
+import CompleteProfile from '../screen/User/CompleteProfile';
+import EditProfile from '../screen/User/EditProfile';
+import Login from '../screen/User/Login';
+import Profile from '../screen/User/Profile';
+import Register from '../screen/User/Register';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

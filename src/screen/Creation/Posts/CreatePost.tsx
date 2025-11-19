@@ -11,9 +11,9 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import { Image, Text, XStack, YStack } from 'tamagui';
 
-import { ArrowLeftIcon } from '../components/icons';
-import { auth, firestore } from '../services/firebase';
-import { uploadImageToCloudinary } from '../services/uploadImage';
+import { ArrowLeftIcon } from '../../../components/icons';
+import { auth, firestore } from '../../../services/firebase';
+import { uploadImageToCloudinary } from '../../../services/uploadImage';
 
 export default function CreatePost() {
   const navigation = useNavigation();
