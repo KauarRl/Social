@@ -22,10 +22,10 @@ export function Load({ navigation }: LoadProps) {
           const userData = userDoc.data();
 
           if (userData?.profileCompleted) {
-            // Perfil completo → vai para Msg
+            // Perfil completo -> navega para MainTabs
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Feed' }],
+              routes: [{ name: 'MainTabs' }],
             });
           } else {
             // Perfil incompleto → vai para InfoComplements
@@ -65,3 +65,6 @@ export function Load({ navigation }: LoadProps) {
     </YStack>
   );
 }
+
+
+

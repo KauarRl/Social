@@ -42,7 +42,7 @@ export default function CompleteProfile({ navigation }: CompleteProfileProps) {
       Toast.show({
         type: 'error',
         text1: 'Erro',
-        text2: 'Usuǭrio nǜo encontrado',
+        text2: 'Usuário não encontrado',
       });
       return;
     }
@@ -94,7 +94,8 @@ export default function CompleteProfile({ navigation }: CompleteProfileProps) {
         text2: 'Bem-vindo!',
       });
 
-      navigation.navigate('Feed');
+      // Agora o Feed está dentro do TabNavigator (MainTabs)
+      navigation.navigate('MainTabs', { screen: 'Feed' });
     } catch (error) {
       console.error(error);
       Toast.show({
@@ -140,15 +141,18 @@ export default function CompleteProfile({ navigation }: CompleteProfileProps) {
           w="90%"
           // h="20%"
           borderBottomWidth={1}
-          onPress={handleSelectPhoto}
         >
           {photoUri ? (
-            <Image
-              source={{ uri: photoUri }}
-              style={{ width: 140, height: 140, borderRadius: 70 }}
-            />
+            <XStack jc="center" ai="center" onPress={handleSelectPhoto}>
+              <Image
+                source={{ uri: photoUri }}
+                style={{ width: 140, height: 140, borderRadius: 70 }}
+              />
+            </XStack>
           ) : (
-            <UserIcon size={140} />
+            <XStack jc="center" ai="center" onPress={handleSelectPhoto}>
+              <UserIcon size={140} />
+            </XStack>
           )}
         </YStack>
         {/* --------------------------------- */}

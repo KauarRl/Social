@@ -12,7 +12,7 @@ import { auth, firestore } from '../services/firebase';
 
 export function searchScreen() {
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets(); // para respeitar a área segura no footer
+  const insets = useSafeAreaInsets();
 
   const userId = auth().currentUser?.uid;
 
@@ -83,39 +83,52 @@ export function searchScreen() {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
-      style={{ flex: 1, height: '100%' }}
+      style={{ flex: 1 }}
     >
-      <YStack flexGrow={1} ai="center" bg="white">
+      <YStack flex={1} bg="white" pb={insets.bottom || 16}>
+        {/* Header com back e título */}
         <XStack
-          jc="flex-start"
+          jc="space-between"
           ai="center"
-          w="100%"
-          p={10}
+          px="$4"
+          pt={insets.top || 16}
+          pb="$3"
           borderBottomWidth={1}
+          borderColor="#eee"
         >
           <XStack
             jc="center"
             ai="center"
             w={40}
             h={40}
-            br={30}
-            bg="#e9e9e9ff"
+            br={20}
+            bg="#e9e9e9"
+            pressStyle={{ scale: 0.95 }}
             onPress={() => navigation.goBack()}
           >
             <ArrowLeftIcon />
           </XStack>
+          <Text fontSize={18} fontWeight="600">
+            Buscar usuário
+          </Text>
+          <XStack w={40} /> {/* espaçador para equilibrar o header */}
         </XStack>
-        <YStack jc="center" ai="center" w="100%" mt={20}>
+
+        {/* Área de busca */}
+        <YStack px="$4" pt="$4" gap="$3">
           <XStack
             jc="flex-start"
             ai="center"
-            w="80%"
-            h={50}
-            pl={40}
-            br={10}
+            w="100%"
+            h={52}
+            pl={42}
+            pr="$3"
+            br={14}
             bw={1}
+            borderColor="#ddd"
+            bg="#fafafa"
           >
-            <XStack pos="absolute" jc="center" ai="center" l={10}>
+            <XStack pos="absolute" jc="center" ai="center" l={14}>
               <SearchIcon />
             </XStack>
             <TextInput
@@ -128,83 +141,56 @@ export function searchScreen() {
           <XStack
             jc="center"
             ai="center"
-            w={100}
-            h={40}
-            mt={20}
-            br={10}
+            w="40%"
+            h={44}
+            alignSelf="center"
+            br={14}
             bg="black"
+            pressStyle={{ scale: 0.97 }}
             onPress={handleSearch}
           >
-            <Text color="white" fontSize={18}>
+            <Text color="white" fontSize={16}>
               Search
             </Text>
           </XStack>
         </YStack>
-        <YStack
-          jc="center"
-          ai="center"
-          w="100%"
-          h="86%"
-          mt={40}
-          borderTopWidth={1}
-        >
-          <YStack w="90%" h="100%" p={20} gap={10} pb={20}>
-            <ScrollView w="100%" h="100%">
-              {searchResult ? (
-                <XStack
-                  jc="flex-start"
-                  ai="center"
-                  w="100%"
-                  h={80}
-                  mb={20}
-                  pl={10}
-                  gap={18}
-                  br={10}
-                  bw={1}
-                  bc="black"
-                >
-                  <Image
-                    source={{ uri: searchResult?.photoUrl }}
-                    w={60}
-                    h={60}
-                    br={30}
-                  />
-                  <Text fontSize={20}>{searchResult?.profileName}</Text>
-                </XStack>
-              ) : null}
-            </ScrollView>
-          </YStack>
-        </YStack>
 
-        {/* Footer fixo com botão "+" centralizado.
-            Usamos posição absoluta e padding inferior com o safe area
-            para não colidir com os botões de navegação do sistema. */}
-        <YStack
-          pos="absolute"
-          l={0}
-          r={0}
-          b={0}
-          pb={insets.bottom || 12}
-          bg="rgba(255,255,255,0.95)"
-          borderTopWidth={1}
-          borderColor="#e5e5e5"
-        >
-          <XStack jc="center" ai="center" h={72}>
-            <XStack
-              w={68}
-              h={68}
-              br={34}
-              bg="black"
-              jc="center"
-              ai="center"
-              pressStyle={{ scale: 0.95 }}
-              // onPress={() => navigation.navigate('AlgumaRota')}
-            >
-              <Text color="white" fontSize={32}>
-                +
-              </Text>
-            </XStack>
-          </XStack>
+        {/* Resultados */}
+        <YStack flex={1} px="$4" pt="$4">
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 40, gap: 12 }}
+            showsVerticalScrollIndicator={false}
+          >
+            {searchResult ? (
+              <XStack
+                jc="flex-start"
+                ai="center"
+                w="100%"
+                h={88}
+                p="$3"
+                gap="$3"
+                br={14}
+                bw={1}
+                borderColor="#ddd"
+                bg="#fdfdfd"
+              >
+                <Image
+                  source={{ uri: searchResult?.photoUrl }}
+                  w={60}
+                  h={60}
+                  br={30}
+                />
+                <Text fontSize={20}>{searchResult?.profileName}</Text>
+              </XStack>
+            ) : (
+              <YStack jc="center" ai="center" py="$6" gap="$2">
+                <Text color="#999">Nenhum resultado ainda</Text>
+                <Text color="#bbb" fontSize={12}>
+                  Busque pelo username exato
+                </Text>
+              </YStack>
+            )}
+          </ScrollView>
         </YStack>
       </YStack>
     </KeyboardAvoidingView>

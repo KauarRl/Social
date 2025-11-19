@@ -14,7 +14,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import { Image, Text, XStack, YStack } from 'tamagui';
 
-import { ArrowLeftIcon } from '../components/icons';
+import { ArrowLeftIcon, UserIcon } from '../components/icons';
 import { auth, firestore } from '../services/firebase';
 import { uploadImageToCloudinary } from '../services/uploadImage';
 
@@ -50,7 +50,7 @@ export default function EditProfile() {
     }
 
     if (!userId) {
-      Toast.show({ type: 'error', text1: 'Usuário nãso logado' });
+      Toast.show({ type: 'error', text1: 'Usuário não logado' });
       return;
     }
 
@@ -93,17 +93,18 @@ export default function EditProfile() {
       setIsSubmitting(false);
     }
   }
+
   async function handleSelectBigPhoto() {
     try {
       const result = await ImagePicker.openPicker({
-        cropping: true, // abre a UI de recorte
-        width: 1200, // defina o aspecto do banner
+        cropping: true,
+        width: 1200,
         height: 500,
         mediaType: 'photo',
         cropperToolbarTitle: 'Ajuste sua imagem',
       });
 
-      setBigPhotoUrl(result.path); // já vem recortada
+      setBigPhotoUrl(result.path);
     } catch (error: any) {
       if (error?.code !== 'E_PICKER_CANCELLED') {
         Toast.show({ type: 'error', text1: 'Erro ao escolher imagem' });
@@ -114,8 +115,7 @@ export default function EditProfile() {
   async function handleSelectProfilePhoto() {
     const result = await launchImageLibrary({
       mediaType: 'photo',
-
-      quality: 0.8, // 80% de qualidade (reduz tamanho)
+      quality: 0.8,
       maxWidth: 800,
       maxHeight: 800,
     });
@@ -123,7 +123,7 @@ export default function EditProfile() {
     if (result.assets && result.assets[0]) {
       const photo = result.assets[0];
       if (photo.uri) {
-        setPhotoUrl(photo.uri); // Salva o caminho da foto
+        setPhotoUrl(photo.uri);
       }
     }
   }
@@ -139,9 +139,9 @@ export default function EditProfile() {
       .onSnapshot(doc => {
         const userData = doc.data();
         setPhotoUrl(userData?.photoURL || '');
-        setBigPhotoUrl(userData?.BigImageProfile || '');
         setProfileName(userData?.profileName || 'User');
         setBio(userData?.bio || '');
+        setBigPhotoUrl(userData?.BigImageProfile || '');
       });
 
     return () => unsubscribe();
@@ -155,118 +155,156 @@ export default function EditProfile() {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <XStack
-            jc="flex-start"
-            ai="center"
-            w="100%"
-            h="$5"
-            pl={10}
-            gap={20}
-            bw={1}
-          >
+          <YStack flex={1} bg="#f8f8f8">
+            {/* Header */}
             <XStack
-              jc="center"
+              jc="space-between"
               ai="center"
-              w={40}
-              h={40}
-              bg="#e4e4e4ff"
-              br={20}
-              onPress={() => navigation.goBack()}
-            >
-              <ArrowLeftIcon />
-            </XStack>
-            <Text fontSize={22}>Edit Profile</Text>
-          </XStack>
-          <YStack flex={1} jc="center" ai="center">
-            <YStack
-              ai="center"
-              w="90%"
-              br={24}
-              bw={1}
+              px="$4"
+              pt="$5"
+              pb="$3"
+              borderBottomWidth={1}
+              borderColor="#ececec"
               bg="white"
-              py="$6"
-              gap="$5"
             >
-              <YStack
-                pos="absolute"
-                jc="center"
-                ai="center"
-                w="100%"
-                h={120}
-                bw={1}
-                br={20}
-                overflow="hidden"
-                onPress={handleSelectBigPhoto}
-              >
-                {bigPhotoUrl ? (
-                  <Image source={{ uri: bigPhotoUrl }} w="100%" h="100%" />
-                ) : (
-                  <Text>Select your Image</Text>
-                )}
-              </YStack>
-
-              <YStack jc="center" ai="center" gap="$3">
-                <YStack
-                  w={120}
-                  h={120}
-                  br={80}
-                  overflow="hidden"
-                  bw={2}
-                  bc="#e4e2e2ff"
-                  bg="white"
-                  onPress={handleSelectProfilePhoto}
-                >
-                  {photoUrl ? (
-                    <Image
-                      source={{ uri: photoUrl }}
-                      style={{ width: '100%', height: '100%' }}
-                    />
-                  ) : null}
-                </YStack>
-              </YStack>
-
-              <YStack gap="$3" w="100%" ai="center">
-                <XStack w="80%" h={60} br={20} bw={1} px="$3" ai="center">
-                  <TextInput
-                    value={profileName}
-                    onChangeText={setProfileName}
-                    placeholder="userName"
-                    style={{ width: '100%' }}
-                  />
-                </XStack>
-              </YStack>
-              <YStack gap="$3" w="100%" ai="center">
-                <XStack w="80%" h={60} br={20} bw={1} px="$3" ai="center">
-                  <TextInput
-                    value={bio}
-                    onChangeText={setBio}
-                    placeholder="ex: I love Alay app"
-                    style={{ width: '100%' }}
-                  />
-                </XStack>
-              </YStack>
-
               <XStack
                 jc="center"
                 ai="center"
-                w="60%"
-                h={56}
-                br={20}
-                bg="black"
-                pressStyle={{ scale: 0.97 }}
-                opacity={saving ? 0.6 : 1}
-                pointerEvents={saving ? 'none' : 'auto'}
-                onPress={handleSave}
+                w={44}
+                h={44}
+                br={22}
+                bg="#f1f1f1"
+                pressStyle={{ scale: 0.95 }}
+                onPress={() => navigation.goBack()}
               >
-                <Text color="white" fontSize={20}>
-                  {saving ? 'Salvando...' : 'Save'}
-                </Text>
+                <ArrowLeftIcon />
               </XStack>
+              <Text fontSize={18} fontWeight="700">
+                Edit Profile
+              </Text>
+              <XStack w={44} h={44} />
+            </XStack>
+
+            <YStack ai="center" px="$4" pt="$4">
+              <YStack
+                w="100%"
+                br={24}
+                bg="white"
+                shadowColor="#000"
+                shadowOpacity={0.08}
+                shadowRadius={12}
+                overflow="hidden"
+              >
+                {/* Banner */}
+                <YStack
+                  h={160}
+                  bg="#e4e4e4"
+                  jc="center"
+                  ai="center"
+                  onPress={handleSelectBigPhoto}
+                >
+                  {bigPhotoUrl ? (
+                    <Image
+                      source={{ uri: bigPhotoUrl }}
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  ) : (
+                    <Text color="#777">Selecione o banner</Text>
+                  )}
+                </YStack>
+
+                {/* Avatar */}
+                <YStack ai="center" mt={-50} mb="$3">
+                  <YStack
+                    jc="center"
+                    ai="center"
+                    w={120}
+                    h={120}
+                    br={60}
+                    overflow="hidden"
+                    bw={3}
+                    bc="#fff"
+                    bg="#f6f6f6"
+                    onPress={handleSelectProfilePhoto}
+                  >
+                    {photoUrl ? (
+                      <Image
+                        source={{ uri: photoUrl }}
+                        style={{ width: '100%', height: '100%' }}
+                      />
+                    ) : (
+                      <UserIcon size={90} />
+                    )}
+                  </YStack>
+                </YStack>
+
+                {/* Inputs */}
+                <YStack gap="$3" px="$4" pb="$4">
+                  <YStack gap="$2">
+                    <Text color="#666">userName</Text>
+                    <XStack
+                      w="100%"
+                      h={56}
+                      br={16}
+                      bw={1}
+                      borderColor="#e0e0e0"
+                      px="$3"
+                      ai="center"
+                      bg="#fafafa"
+                    >
+                      <TextInput
+                        value={profileName}
+                        onChangeText={setProfileName}
+                        placeholder="userName"
+                        style={{ width: '100%' }}
+                      />
+                    </XStack>
+                  </YStack>
+
+                  <YStack gap="$2">
+                    <Text color="#666">Bio</Text>
+                    <XStack
+                      w="100%"
+                      h={100}
+                      br={16}
+                      bw={1}
+                      borderColor="#e0e0e0"
+                      px="$3"
+                      pt={8}
+                      bg="#fafafa"
+                    >
+                      <TextInput
+                        value={bio}
+                        onChangeText={setBio}
+                        placeholder="ex: I love Alay app"
+                        style={{ width: '100%', height: '100%' }}
+                        multiline
+                      />
+                    </XStack>
+                  </YStack>
+
+                  <XStack
+                    jc="center"
+                    ai="center"
+                    w="100%"
+                    h={56}
+                    br={18}
+                    bg="black"
+                    pressStyle={{ scale: 0.97 }}
+                    opacity={saving ? 0.6 : 1}
+                    pointerEvents={saving ? 'none' : 'auto'}
+                    onPress={handleSave}
+                  >
+                    <Text color="white" fontSize={18}>
+                      {saving ? 'Salvando...' : 'Save'}
+                    </Text>
+                  </XStack>
+                </YStack>
+              </YStack>
             </YStack>
           </YStack>
         </ScrollView>

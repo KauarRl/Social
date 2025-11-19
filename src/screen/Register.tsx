@@ -36,17 +36,20 @@ export default function Register() {
       await firestore()
         .collection('users')
         .doc(userId)
-        .set({
-          email: email || '',
-          bio: '',
-          photoURL: '',
-          profileName: '',
-          profileCompleted: false,
-          Folling: '0',
-          Follers: '0',
-          BigImageProfile: '',
-          createdAt: firestore.FieldValue.serverTimestamp(),
-        });
+        .set(
+          {
+            email: email || '',
+            bio: '',
+            photoURL: '',
+            profileName: '',
+            profileCompleted: false,
+            Following: 0,
+            Followers: 0,
+            BigImageProfile: '',
+            createdAt: firestore.FieldValue.serverTimestamp(),
+          },
+          { merge: true },
+        );
 
       Toast.show({
         type: 'success',
