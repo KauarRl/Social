@@ -43,7 +43,7 @@ export default function Login() {
           text1: 'Bem-vindo',
           text2: `Olá, ${userData.profileName}!`,
         });
-        navigation.navigate('Feed');
+        navigation.navigate('MainTabs', { screen: 'Feed' });
       } else {
         // Perfil incompleto → vai para CompleteProfile
         Toast.show({
@@ -151,3 +151,4 @@ export default function Login() {
     </YStack>
   );
 }
+
