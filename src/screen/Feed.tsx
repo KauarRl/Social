@@ -2,7 +2,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Image, Text, XStack, YStack } from 'tamagui';
+import { Button, Image, Text, XStack, YStack } from 'tamagui';
 
 import { SearchIcon, UserIcon } from '../components/icons';
 import { auth, firestore } from '../services/firebase';
@@ -176,6 +176,9 @@ export default function Feed() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 40 }}
         >
+          <Button onPress={() => navigation.navigate('FriendProfile')}>
+            <Text>FriendProfile</Text>
+          </Button>
           {Posts}
         </ScrollView>
       </YStack>

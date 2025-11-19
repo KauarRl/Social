@@ -79,6 +79,20 @@ export function searchScreen() {
     }
   }
 
+  async function ViewProfile() {
+    if (searchResult?.id === userId) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao acessar perfil',
+        text2: 'Você está tentando acessar o próprio perfil!',
+      });
+    } else {
+      navigation.navigate('FriendProfile', {
+        profileUserId: searchResult.id,
+      });
+    }
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -173,6 +187,7 @@ export function searchScreen() {
                 bw={1}
                 borderColor="#ddd"
                 bg="#fdfdfd"
+                onPress={ViewProfile}
               >
                 <Image
                   source={{ uri: searchResult?.photoUrl }}

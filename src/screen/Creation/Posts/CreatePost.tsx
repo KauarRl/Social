@@ -23,18 +23,30 @@ export default function CreatePost() {
   const [postCaption, setPostCapition] = useState('');
 
   async function handleSelectPicture() {
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      quality: 0.8,
-      maxWidth: 800,
-      maxHeight: 800,
-    });
+    try {
+      const { didCancel, errorCode, assets } = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 0.8,
+        maxWidth: 800,
+        maxHeight: 800,
+      });
 
-    if (result.assets && result.assets[0]) {
-      const photo = result.assets[0];
-      if (photo.uri) {
-        setPostPicture(photo.uri);
+      if (errorCode) {
+        console.warn('ImagePicker error:', errorCode);
+        return;
       }
+      if (didCancel || !assets?.length) {
+        Toast.show({
+          text1: 'Precisamos de acesso a galeria',
+        });
+        console.log('Usuário cancelou');
+        return;
+      }
+
+      const uri = assets[0]?.uri;
+      if (uri) setPostPicture(uri);
+    } catch (err) {
+      console.error('Falha ao abrir galeria', err);
     }
   }
 
