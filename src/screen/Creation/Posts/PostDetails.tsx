@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Image, Text, XStack, YStack } from 'tamagui';
 
-import { CommentsSection } from '../components/CommentsSection';
-import { ArrowLeftIcon } from '../components/icons';
-import { RootStackParamList } from '../navigation/types';
-import { firestore } from '../services/firebase';
+import { CommentsSection } from '../../../components/CommentsSection';
+import { ArrowLeftIcon } from '../../../components/icons';
+import { RootStackParamList } from '../../../navigation/types';
+import { firestore } from '../../../services/firebase';
 
 export default function PostDetails() {
   const navigation = useNavigation();

@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { Image, ScrollView, Text, XStack, YStack } from 'tamagui';
 
-import { ArrowLeftIcon, MenuIcon, UserIcon } from '../components/icons';
-import { auth, firestore } from '../services/firebase';
+import { ArrowLeftIcon, MenuIcon, UserIcon } from '../../components/icons';
+import { auth, firestore } from '../../services/firebase';
 
 type Post = {
   id: string;
