@@ -2,6 +2,7 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { Image, ScrollView, Text, XStack, YStack } from 'tamagui';
 
 import { ArrowLeftIcon, MenuIcon, UserIcon } from '../../components/icons';
@@ -29,6 +30,10 @@ export default function FriendProfile() {
   const [profileName, setProfileName] = useState('');
   const [posts, setPosts] = useState<Post[]>([]);
 
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [modalOptions, setModalOptionsVisible] = useState(false);
 
   const reelsVisible = activeTab === 'reels';
@@ -38,6 +43,105 @@ export default function FriendProfile() {
 
   const friendId = profileUserId;
 
+  async function FollowUser() {
+    if (userId === undefined) {
+      Toast.show({ type: 'error', text1: 'Usuário não logado!' });
+    } else {
+      //Adiciona o id do usuario logado, na aba de seguidores do usuario X
+      await firestore()
+        .collection('users')
+        .doc(friendId)
+        .collection('followers')
+        .doc(userId)
+        .set({ followingfrom: firestore.FieldValue.serverTimestamp() });
+
+      //Adiciona no meu perfil na aba de Seguindo, o id do usuario que eu segui
+      await firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('following')
+        .doc(friendId)
+        .set({ followingfrom: firestore.FieldValue.serverTimestamp() });
+
+      // Adiciona o numero 1 nos seguidores do usuario que "eu" segui
+      await firestore()
+        .collection('users')
+        .doc(friendId)
+        .set(
+          { followersCount: firestore.FieldValue.increment(1) },
+          { merge: true },
+        );
+      setFollowersCount(prev => Math.max(0, prev + 1));
+
+      await firestore()
+        .collection('users')
+        .doc(userId)
+        .set(
+          { followingCount: firestore.FieldValue.increment(1) },
+          { merge: true },
+        );
+    }
+  }
+
+  async function unFollowUser() {
+    if (userId === undefined) {
+      Toast.show({ type: 'error', text1: 'Usuário não logado!' });
+    } else {
+      if (isFollowing === true) {
+        // Deleta o Id do usuario que estava seguindo o usuário X
+        await firestore()
+          .collection('users')
+          .doc(friendId)
+          .collection('followers')
+          .doc(userId)
+          .delete();
+        // Deleta o Id do usuário X da "minha" aba de usuário que eu estava seguindo
+        await firestore()
+          .collection('users')
+          .doc(userId)
+          .collection('following')
+          .doc(friendId)
+          .delete();
+
+        // Atualiza o contador de seguidores do usuário X
+        await firestore()
+          .collection('users')
+          .doc(friendId)
+          .set(
+            { followersCount: firestore.FieldValue.increment(-1) },
+            { merge: true },
+          );
+        setFollowersCount(prev => Math.max(0, prev - 1));
+
+        // Atualiza o contador de pessoas que "eu" estava seguindo
+        await firestore()
+          .collection('users')
+          .doc(userId)
+          .set(
+            { followingCount: firestore.FieldValue.increment(-1) },
+            { merge: true },
+          );
+      }
+    }
+  }
+  //useEffect de verificação e confirmação se "eu" estou ou não seguindo o usuário X
+  useEffect(() => {
+    if (!friendId || !userId) return;
+
+    const ref = firestore()
+      .collection('users')
+      .doc(friendId)
+      .collection('followers')
+      .doc(userId);
+
+    const unsubscribe = ref.onSnapshot(docSnap => {
+      setIsFollowing(docSnap.exists);
+    });
+
+    return unsubscribe; // limpa ao desmontar
+  }, [friendId, userId]);
+
+  //useEffect de dados do usuario X
   useEffect(() => {
     if (!friendId) return;
 
@@ -49,12 +153,14 @@ export default function FriendProfile() {
         setPhotoUrl(userData?.photoURL || '');
         setBigPhotoUrl(userData?.BigImageProfile || '');
         setProfileName(userData?.profileName || 'User');
+        setFollowingCount(userData?.followingCount);
         setBio(userData?.bio || '');
       });
 
     return () => unsubscribe();
   }, [friendId]);
 
+  //useEffect de post do usuario X
   useEffect(() => {
     if (!userId) return;
 
@@ -226,13 +332,40 @@ export default function FriendProfile() {
             <XStack jc="space-around" ai="center" px="$4" py="$4" bg="#fafafa">
               <YStack ai="center">
                 <Text fontSize={18} fontWeight="700">
-                  1000
+                  {followersCount}
                 </Text>
                 <Text color="#777">Seguidores</Text>
               </YStack>
+              {isFollowing ? (
+                <XStack
+                  jc="center"
+                  ai="center"
+                  bg="#cacacaff"
+                  w={100}
+                  h={40}
+                  br={20}
+                  pressStyle={{ scale: 0.98 }}
+                  onPress={unFollowUser}
+                >
+                  <Text col="#a0a0a0ff">following</Text>
+                </XStack>
+              ) : (
+                <XStack
+                  jc="center"
+                  ai="center"
+                  bg="black"
+                  w={100}
+                  h={40}
+                  br={20}
+                  pressStyle={{ scale: 0.98 }}
+                  onPress={FollowUser}
+                >
+                  <Text col="white">Follow</Text>
+                </XStack>
+              )}
               <YStack ai="center">
                 <Text fontSize={18} fontWeight="700">
-                  100
+                  {followingCount}
                 </Text>
                 <Text color="#777">Seguindo</Text>
               </YStack>
