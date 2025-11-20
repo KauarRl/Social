@@ -26,6 +26,9 @@ export default function Profile() {
   const [bigPhotoUrl, setBigPhotoUrl] = useState('');
   const [posts, setPosts] = useState<Post[]>([]);
 
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+
   const [modalOptions, setModalOptionsVisible] = useState(false);
 
   const reelsVisible = activeTab === 'reels';
@@ -68,6 +71,38 @@ export default function Profile() {
       });
 
     return () => unsubscribe();
+  }, [userId]);
+
+  // Fica verificando quantas pessoas "eu" sigo
+  useEffect(() => {
+    if (!userId) return;
+
+    const unsubscribe = firestore()
+      .collection('users')
+      .doc(userId)
+      .onSnapshot(docSnap => {
+        if (docSnap.exists) {
+          setFollowersCount(docSnap.data()?.followersCount ?? 0);
+        }
+      });
+
+    return unsubscribe; // desmonta o listener ao sair da tela
+  }, [userId]);
+
+  // Fica escutando quantos seguidores "eu" tenho
+  useEffect(() => {
+    if (!userId) return;
+
+    const unsubscribe = firestore()
+      .collection('users')
+      .doc(userId)
+      .onSnapshot(docSnap => {
+        if (docSnap.exists) {
+          setFollowingCount(docSnap.data()?.followingCount ?? 0);
+        }
+      });
+
+    return unsubscribe; // desmonta o listener ao sair da tela
   }, [userId]);
 
   useEffect(() => {
@@ -293,13 +328,13 @@ export default function Profile() {
             <XStack jc="space-around" ai="center" px="$4" py="$4" bg="#fafafa">
               <YStack ai="center">
                 <Text fontSize={18} fontWeight="700">
-                  1000
+                  {followersCount}
                 </Text>
                 <Text color="#777">Seguidores</Text>
               </YStack>
               <YStack ai="center">
                 <Text fontSize={18} fontWeight="700">
-                  100
+                  {followingCount}
                 </Text>
                 <Text color="#777">Seguindo</Text>
               </YStack>

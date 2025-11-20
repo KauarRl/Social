@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { TextInput } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { H1, Text, XStack, YStack } from 'tamagui';
+import { Text, XStack, YStack } from 'tamagui';
 
 export default function Login() {
   const navigation = useNavigation();
@@ -86,7 +86,9 @@ export default function Login() {
   return (
     <YStack flex={1} jc="center" ai="center" bg="white">
       <YStack jc="flex-start" ai="center" w="80%" h="70%" bw={1} br={30}>
-        <H1 mt="$10">Login</H1>
+        <Text mt="$10" fontSize={32} fontWeight="700">
+          Login
+        </Text>
         <YStack jc="center" ai="center" mt="$10" gap="$6">
           <XStack w="70%" h={60} pl={10} bw={1} br={10}>
             <TextInput

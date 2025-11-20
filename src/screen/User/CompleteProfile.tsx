@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Image, TextInput } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
-import { H1, Text, XStack, YStack } from 'tamagui';
+import { Text, XStack, YStack } from 'tamagui';
 
 import { UserIcon } from '../../components/icons';
 import { RootStackScreenProps } from '../../navigation/types';
@@ -111,7 +111,7 @@ export default function CompleteProfile({ navigation }: CompleteProfileProps) {
     <YStack f={1} jc="center" ai="center" bg="white">
       {/* Title with screen name */}
       <XStack jc="center" ai="center" w="90%" mb={20} bw={1}>
-        <H1
+        <Text
           pos="absolute"
           w={320}
           ta="center"
@@ -120,7 +120,7 @@ export default function CompleteProfile({ navigation }: CompleteProfileProps) {
           bg="white"
         >
           Complete Your Profile
-        </H1>
+        </Text>
       </XStack>
       {/* ---------------------- */}
 

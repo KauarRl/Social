@@ -2,7 +2,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Button, Image, Text, XStack, YStack } from 'tamagui';
+import { Image, Text, XStack, YStack } from 'tamagui';
 
 import { SearchIcon, UserIcon } from '../components/icons';
 import { auth, firestore } from '../services/firebase';
@@ -43,63 +43,6 @@ export default function Feed() {
             pressStyle={{ scale: 0.95 }}
           >
             <UserIcon size={32} />
-          </XStack>
-        </YStack>
-      )),
-    [],
-  );
-
-  const Posts = useMemo(
-    () =>
-      Array.from({ length: 6 }).map((_, index) => (
-        <YStack
-          key={index}
-          w="100%"
-          br={16}
-          bw={1}
-          borderColor="#5a5a5aff"
-          bg="white"
-          overflow="hidden"
-          mb="$4"
-          shadowColor="#000"
-          shadowOpacity={0.08}
-          shadowRadius={8}
-        >
-          <XStack jc="space-between" ai="center" px="$4" py="$3" bg="#fafafa">
-            <XStack ai="center" gap="$3">
-              <XStack
-                w={36}
-                h={36}
-                br={18}
-                overflow="hidden"
-                bg="#f0f0f0"
-                jc="center"
-                ai="center"
-              >
-                <UserIcon size={20} />
-              </XStack>
-              <Text fontSize={14} fontWeight="600">
-                Usuário {index + 1}
-              </Text>
-            </XStack>
-            <Text color="#aaa">há 2h</Text>
-          </XStack>
-
-          <YStack px="$4" py="$3" bg="#fff">
-            <Text color="#333" fontSize={15} lineHeight={20}>
-              Post enche linguiça só para ter alguma coisa no exemplo de
-              postagem do meu app e bla bla bla.
-            </Text>
-          </YStack>
-
-          <YStack jc="center" ai="center" h={220} bg="#eaeaea">
-            <Text color="#777">Imagem</Text>
-          </YStack>
-
-          <XStack px="$4" py="$3" jc="space-between" ai="center" bg="#fafafa">
-            <Text color="#555">Curtir</Text>
-            <Text color="#555">Comentar</Text>
-            <Text color="#555">Salvar</Text>
           </XStack>
         </YStack>
       )),
@@ -176,10 +119,7 @@ export default function Feed() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 40 }}
         >
-          <Button onPress={() => navigation.navigate('FriendProfile')}>
-            <Text>FriendProfile</Text>
-          </Button>
-          {Posts}
+          <Text>Posts em breve</Text>
         </ScrollView>
       </YStack>
     </KeyboardAvoidingView>
