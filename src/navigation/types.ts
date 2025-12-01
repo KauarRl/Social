@@ -2,7 +2,9 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 // Root Stack Navigator
 export type RootStackParamList = {
-  Feed: undefined;
+  Feed: {
+    postId: string;
+  };
   Profile: undefined;
   Login: undefined;
   Register: undefined;

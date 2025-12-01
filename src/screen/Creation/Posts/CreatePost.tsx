@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
+  PermissionsAndroid,
   Platform,
   ScrollView,
   TextInput,
@@ -22,7 +23,31 @@ export default function CreatePost() {
   const [postPicture, setPostPicture] = useState('');
   const [postCaption, setPostCapition] = useState('');
 
+  async function ensurePhotoPermission() {
+    if (Platform.OS !== 'android') return true;
+
+    const perm =
+      Platform.Version >= 33
+        ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+        : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+
+    const result = await PermissionsAndroid.request(perm);
+    const granted = result === PermissionsAndroid.RESULTS.GRANTED;
+
+    if (!granted) {
+      Toast.show({
+        type: 'error',
+        text1: 'Permita acesso ‡s fotos',
+        text2: 'Precisamos da permiss„o para escolher imagens',
+      });
+    }
+    return granted;
+  }
+
   async function handleSelectPicture() {
+    const permissionOk = await ensurePhotoPermission();
+    if (!permissionOk) return;
+
     try {
       const { didCancel, errorCode, assets } = await launchImageLibrary({
         mediaType: 'photo',
@@ -36,10 +61,7 @@ export default function CreatePost() {
         return;
       }
       if (didCancel || !assets?.length) {
-        Toast.show({
-          text1: 'Precisamos de acesso a galeria',
-        });
-        console.log('Usu√°rio cancelou');
+        console.log('Usu·rio cancelou');
         return;
       }
 
@@ -59,7 +81,7 @@ export default function CreatePost() {
     }
 
     if (!userId) {
-      Toast.show({ type: 'error', text1: 'Usu√°rio n√£o logado' });
+      Toast.show({ type: 'error', text1: 'Usu·rio n„o logado' });
       return;
     }
 
@@ -88,7 +110,7 @@ export default function CreatePost() {
       navigation.goBack();
     } catch (error) {
       console.error('Erro ao criar o post :', error);
-      Toast.show({ type: 'error', text1: 'N√£o foi poss√≠vel salvar' });
+      Toast.show({ type: 'error', text1: 'N„o foi possÌvel salvar' });
     }
   }
 
@@ -103,7 +125,7 @@ export default function CreatePost() {
         contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header com bot√£o de voltar estilizado */}
+        {/* Header com bot„o de voltar estilizado */}
         <XStack jc="space-between" ai="center" mb="$4">
           <XStack
             jc="center"
@@ -123,7 +145,7 @@ export default function CreatePost() {
           <Text fontSize={20} fontWeight="700">
             Create Post
           </Text>
-          <XStack w={42} /> {/* espa√ßador para alinhar */}
+          <XStack w={42} /> {/* espaÁador para alinhar */}
         </XStack>
 
         {/* Seletor da imagem (placeholder) */}
@@ -178,7 +200,7 @@ export default function CreatePost() {
           </XStack>
         </YStack>
 
-        {/* Grupo de bot√µes de a√ß√£o (salvar rascunho / publicar) */}
+        {/* Grupo de botıes de aÁ„o (salvar rascunho / publicar) */}
         <XStack jc="space-between" ai="center" gap="$3" mt="$2">
           <XStack
             f={1}
