@@ -1,4 +1,5 @@
-ï»¿/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable react-native/no-inline-styles */
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -7,15 +8,21 @@ import { Image, Text, XStack, YStack } from 'tamagui';
 import { CommentsSection } from '../../../components/CommentsSection';
 import { ArrowLeftIcon } from '../../../components/icons';
 import { RootStackParamList } from '../../../navigation/types';
-import { firestore } from '../../../services/firebase';
+import { auth, firestore } from '../../../services/firebase';
 
 export default function PostDetails() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, 'PostDetails'>>();
   const { postId, postImage, caption, createdAt } = route.params;
 
+  const userId = auth().currentUser?.uid;
+
   const [authorName, setAuthorName] = useState('Carregando...');
   const [authorAvatar, setAuthorAvatar] = useState<string | undefined>();
+
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [commentsCount, setCommentsCount] = useState(0);
 
   const formattedTime = createdAt
     ? new Date(createdAt).toLocaleString('pt-BR', {
@@ -24,8 +31,9 @@ export default function PostDetails() {
         hour: '2-digit',
         minute: '2-digit',
       })
-    : 'hÃ¡ pouco';
+    : 'há pouco';
 
+  // Busca dados do autor
   useEffect(() => {
     if (!postId) return;
 
@@ -65,6 +73,83 @@ export default function PostDetails() {
       isMounted = false;
     };
   }, [postId]);
+
+  // Ouve contadores do post (likes/comentários)
+  useEffect(() => {
+    if (!postId) return;
+
+    const unsubscribe = firestore()
+      .collection('posts')
+      .doc(postId)
+      .onSnapshot(doc => {
+        const userData = doc.data();
+        setLikeCount(userData?.likesCount || 0);
+        setCommentsCount(userData?.commentsCount || 0);
+      });
+
+    return () => unsubscribe();
+  }, [postId]);
+
+  // Ouve se o usuário atual já curtiu
+  useEffect(() => {
+    if (!postId || !userId) return;
+
+    const ref = firestore()
+      .collection('posts')
+      .doc(postId)
+      .collection('likes')
+      .doc(userId);
+
+    const unsubscribe = ref.onSnapshot(snap => {
+      setLiked(snap.exists);
+    });
+
+    return unsubscribe;
+  }, [postId, userId]);
+
+  async function likePostWithId(targetPostId: string) {
+    if (!userId || !targetPostId) return;
+
+    const likeRef = firestore()
+      .collection('posts')
+      .doc(targetPostId)
+      .collection('likes')
+      .doc(userId);
+
+    const already = await likeRef.get();
+    if (already.exists) return;
+
+    await likeRef.set({ createdAt: firestore.FieldValue.serverTimestamp() });
+    await firestore()
+      .collection('posts')
+      .doc(targetPostId)
+      .set({ likesCount: firestore.FieldValue.increment(1) }, { merge: true });
+
+    setLiked(true);
+    setLikeCount(prev => prev + 1);
+  }
+
+  async function unlikePostWithId(targetPostId: string) {
+    if (!userId || !targetPostId) return;
+
+    const likeRef = firestore()
+      .collection('posts')
+      .doc(targetPostId)
+      .collection('likes')
+      .doc(userId);
+
+    const existing = await likeRef.get();
+    if (!existing.exists) return;
+
+    await likeRef.delete();
+    await firestore()
+      .collection('posts')
+      .doc(targetPostId)
+      .set({ likesCount: firestore.FieldValue.increment(-1) }, { merge: true });
+
+    setLiked(false);
+    setLikeCount(prev => Math.max(0, prev - 1));
+  }
 
   return (
     <YStack flex={1} bg="#f2f2f2">
@@ -130,7 +215,7 @@ export default function PostDetails() {
                   </Text>
                 </YStack>
               </XStack>
-              <Text color="#aaa">â€¢â€¢â€¢</Text>
+              <Text color="#aaa">...</Text>
             </XStack>
 
             <YStack px="$4" pb="$3">
@@ -148,11 +233,16 @@ export default function PostDetails() {
             </YStack>
 
             <XStack jc="space-around" ai="center" py="$3" bg="#fafafa">
-              <Text color="#666" fontWeight="600">
-                Curtir
+              <Text
+                color={liked ? '#d00' : '#444'}
+                onPress={() =>
+                  liked ? unlikePostWithId(postId) : likePostWithId(postId)
+                }
+              >
+                {likeCount} {liked ? '??' : '??'}
               </Text>
               <Text color="#666" fontWeight="600">
-                Comentar
+                {commentsCount} ??
               </Text>
               <Text color="#666" fontWeight="600">
                 Salvar
