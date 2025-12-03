@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,6 +8,8 @@ import { Text, XStack, YStack } from 'tamagui';
 
 import CreatePost from '../screen/Creation/Posts/CreatePost';
 import PostDetails from '../screen/Creation/Posts/PostDetails';
+import CreateStory from '../screen/Creation/Story/CreateStory';
+import StorysView from '../screen/Creation/Story/storysView';
 import Feed from '../screen/Feed';
 import { Load } from '../screen/Load';
 import { searchScreen } from '../screen/searchScreen';
@@ -65,8 +68,9 @@ function PlusTabBar() {
             h={40}
             br={8}
             pressStyle={{ scale: 0.98 }}
+            onPress={() => navigation.navigate('CreateStory')}
           >
-            <Text color="white">Add Story</Text>
+            <Text color="white"> Story</Text>
           </XStack>
           <XStack
             jc="center"
@@ -81,7 +85,7 @@ function PlusTabBar() {
               setCreationStackVisible(false);
             }}
           >
-            <Text color="white">Create Post</Text>
+            <Text color="white">Post</Text>
           </XStack>
         </YStack>
       ) : null}
@@ -119,9 +123,11 @@ export function RootNavigator() {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="CompleteProfile" component={CompleteProfile} />
+      <Stack.Screen name="CreateStory" component={CreateStory} />
       <Stack.Screen name="CreatePost" component={CreatePost} />
       <Stack.Screen name="PostDetails" component={PostDetails} />
-      <Tab.Screen name="FriendProfile" component={FriendProfile} />
+      <Stack.Screen name="storysView" component={StorysView} />
+      <Stack.Screen name="FriendProfile" component={FriendProfile} />
 
       {/* Telas com bottom tab: basta navegar para MainTabs */}
       <Stack.Screen name="MainTabs" component={MainTabs} />

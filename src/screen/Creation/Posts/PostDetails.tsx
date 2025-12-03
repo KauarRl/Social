@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-native/no-inline-styles */
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
@@ -24,6 +23,8 @@ export default function PostDetails() {
   const [likeCount, setLikeCount] = useState(0);
   const [commentsCount, setCommentsCount] = useState(0);
 
+  const [disabled, setDisabled] = useState(false);
+
   const formattedTime = createdAt
     ? new Date(createdAt).toLocaleString('pt-BR', {
         day: '2-digit',
@@ -31,7 +32,7 @@ export default function PostDetails() {
         hour: '2-digit',
         minute: '2-digit',
       })
-    : 'h� pouco';
+    : 'há pouco';
 
   // Busca dados do autor
   useEffect(() => {
@@ -55,7 +56,7 @@ export default function PostDetails() {
         const userData = userDoc.data();
 
         if (isMounted) {
-          setAuthorName(userData?.profileName || 'Sem nome');
+          setAuthorName(userData?.profileName);
           setAuthorAvatar(userData?.photoURL);
         }
       } catch (error) {
@@ -74,7 +75,7 @@ export default function PostDetails() {
     };
   }, [postId]);
 
-  // Ouve contadores do post (likes/coment�rios)
+  // Ouve contadores do post (likes/comentários)
   useEffect(() => {
     if (!postId) return;
 
@@ -90,7 +91,7 @@ export default function PostDetails() {
     return () => unsubscribe();
   }, [postId]);
 
-  // Ouve se o usu�rio atual j� curtiu
+  // Ouve se o usuário atual já curtiu
   useEffect(() => {
     if (!postId || !userId) return;
 
@@ -235,14 +236,19 @@ export default function PostDetails() {
             <XStack jc="space-around" ai="center" py="$3" bg="#fafafa">
               <Text
                 color={liked ? '#d00' : '#444'}
-                onPress={() =>
-                  liked ? unlikePostWithId(postId) : likePostWithId(postId)
-                }
+                style={{ opacity: disabled ? 0.5 : 1 }}
+                onPress={async () => {
+                  setDisabled(true);
+                  (await liked)
+                    ? unlikePostWithId(postId)
+                    : likePostWithId(postId);
+                  setDisabled(false);
+                }}
               >
-                {likeCount} {liked ? '??' : '??'}
+                {likeCount} {liked ? '❤️' : '🖤'}
               </Text>
               <Text color="#666" fontWeight="600">
-                {commentsCount} ??
+                {commentsCount} 💬
               </Text>
               <Text color="#666" fontWeight="600">
                 Salvar

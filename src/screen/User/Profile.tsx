@@ -15,6 +15,13 @@ type Post = {
   createdAt: string;
 };
 
+type Story = {
+  id: string;
+  imageUrl: string;
+  caption?: string;
+  createdAt: string;
+};
+
 export default function Profile() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -25,6 +32,7 @@ export default function Profile() {
   const [bio, setBio] = useState('');
   const [bigPhotoUrl, setBigPhotoUrl] = useState('');
   const [posts, setPosts] = useState<Post[]>([]);
+  const [haveStorys, setStorys] = useState<Story[]>([]);
 
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
@@ -133,6 +141,40 @@ export default function Profile() {
         error => {
           console.error('Erro ao buscar posts:', error);
           setPosts([]);
+        },
+      );
+
+    return () => unsubscribe();
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    // Busca Storys do usuário logado
+    const unsubscribe = firestore()
+      .collection('story')
+      .where('authorId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(
+        snap => {
+          if (!snap) return;
+          const data = snap.docs.map(doc => {
+            const raw = doc.data() as any;
+            return {
+              id: doc.id,
+              imageUrl: raw.imageUrl || raw.storyImage || '',
+              caption: raw.caption || '',
+              // normaliza o timestamp do Firestore para string ISO
+              createdAt: raw.createdAt?.toDate
+                ? raw.createdAt.toDate().toISOString()
+                : '',
+            };
+          });
+          setStorys(data);
+        },
+        error => {
+          console.error('Erro ao buscar Storys:', error);
+          setStorys([]);
         },
       );
 
@@ -315,6 +357,13 @@ export default function Profile() {
                 )}
               </YStack>
             </YStack>
+            <XStack
+              jc="center"
+              ai="center"
+              onPress={() => navigation.navigate('storysView')}
+            >
+              <Text>ViewStory</Text>
+            </XStack>
 
             <YStack ai="center" gap="$1" px="$4" mb="$4">
               <Text fontSize={22} fontWeight="700">
