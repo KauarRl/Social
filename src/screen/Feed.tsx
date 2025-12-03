@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -11,6 +11,7 @@ import {
 import { Image, Text, XStack, YStack } from 'tamagui';
 
 import { SearchIcon, UserIcon } from '../components/icons';
+import { useStoriesFromFollowing } from '../hooks/StorysRender';
 import { auth, firestore } from '../services/firebase';
 
 type Post = {
@@ -26,6 +27,8 @@ type Post = {
 export default function Feed() {
   const navigation = useNavigation();
   const userId = auth().currentUser?.uid;
+
+  const storys = useStoriesFromFollowing();
 
   const [photoUrl, setPhotoUrl] = useState('');
   const [posts, setPosts] = useState<Post[]>([]);
@@ -100,28 +103,6 @@ export default function Feed() {
 
     return unsub;
   }, []);
-
-  const Stories = useMemo(
-    () =>
-      Array.from({ length: 8 }).map((_, index) => (
-        <YStack key={index} ai="center" mr="$3" gap="$2">
-          <XStack
-            jc="center"
-            ai="center"
-            w={64}
-            h={64}
-            br={32}
-            bw={2}
-            bc="#e5e5e5"
-            bg="#f7f7f7"
-            pressStyle={{ scale: 0.95 }}
-          >
-            <UserIcon size={32} />
-          </XStack>
-        </YStack>
-      )),
-    [],
-  );
 
   async function likePost(postId: string) {
     if (!userId) return;
@@ -322,14 +303,58 @@ export default function Feed() {
           </XStack>
         </XStack>
 
-        {/* Stories */}
+        {/* Storys */}
         <YStack mb="$4">
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 4 }}
+            contentContainerStyle={{ paddingHorizontal: 8, gap: 12 }}
           >
-            <XStack>{Stories}</XStack>
+            <XStack ai="center" gap="$3">
+              {storys && storys.length ? (
+                storys.map(story => (
+                  <YStack
+                    key={story.id}
+                    ai="center"
+                    gap="$2"
+                    pressStyle={{ scale: 0.95 }}
+                    onPress={() =>
+                      navigation.navigate('storysView', {
+                        storyId: story.id,
+                        authorId: story.authorId,
+                        storyImage: story.storyImage,
+                        caption: story.caption,
+                        createdAt: story.createdAt?.toDate?.()?.toISOString(),
+                      })
+                    }
+                  >
+                    <XStack
+                      w={68}
+                      h={68}
+                      br={34}
+                      bw={2}
+                      borderColor="#e5e5e5"
+                      overflow="hidden"
+                      bg="#f5f5f5"
+                    >
+                      {story.storyImage ? (
+                        <Image
+                          source={{ uri: story.storyImage }}
+                          style={{ width: '100%', height: '100%' }}
+                          resizeMode="cover"
+                        />
+                      ) : (
+                        <XStack flex={1} jc="center" ai="center">
+                          <UserIcon size={28} />
+                        </XStack>
+                      )}
+                    </XStack>
+                  </YStack>
+                ))
+              ) : (
+                <Text color="#999">Nenhum story</Text>
+              )}
+            </XStack>
           </ScrollView>
         </YStack>
 

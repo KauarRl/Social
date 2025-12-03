@@ -14,6 +14,14 @@ export type RootStackParamList = {
   search: undefined;
   MainTabs: undefined;
   CreatePost: undefined;
+  CreateStory: undefined;
+  storysView: {
+    storyId: string;
+    storyImage: string;
+    authorId: string;
+    caption?: string;
+    createdAt?: string;
+  };
   PostDetails: {
     postId: string;
     postImage: string;
@@ -26,10 +34,8 @@ export type RootStackParamList = {
 };
 
 // Screen props types
-export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
-  RootStackParamList,
-  T
->;
+export type RootStackScreenProps<T extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, T>;
 
 // Declare global type for navigation
 declare global {
